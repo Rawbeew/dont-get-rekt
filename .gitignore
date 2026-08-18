@@ -1,0 +1,9 @@
+# Build artefacts
+*.pyc
+__pycache__/
+
+# Local-only files (private system, prompts, signals, paper positions)
+.env
+*.byok
+*.local
+state/

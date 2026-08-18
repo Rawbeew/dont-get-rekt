@@ -1,0 +1,64 @@
+# signal-then-vote — LLM-readable summary
+
+> A short, machine-readable index of what this project is, who it's for,
+> and what it does. This file follows the `llmstxt.org` convention so LLM
+> crawlers and search-engine AI overviews can summarize it accurately.
+
+## What this project is
+The **public, watered-down portfolio** of a paper-mode crypto signal
+engine. The full private system ingests multi-chain on-chain data, runs
+classic technical signals, and asks a free-tier LLM to cast a single
+structured BUY/SKIP vote per token — with explicit risk gates that
+make the vote a defensible audit trail rather than a vibe.
+
+## Who it's for
+- **Engineers** building LLM-as-decision systems in finance, trading, or
+  any domain where a single structured vote matters more than a free-text
+  paragraph.
+- **Crypto traders** curious about whether LLM-as-judge is real engineering
+  or just prompt-magic.
+- **Hiring managers** looking for AI/LLM engineers who can design
+  systems where the model is one *component* — gated, audited, and
+  overridable — not the whole product.
+
+## Key design choices
+
+### The core feature
+The structured BUY/SKIP prompt as a final-stage judge. A single
+language-model call that takes pre-normalised signal data and returns
+exactly two things: `BUY:` or `SKIP:` and a 2-sentence reason citing
+which gate flipped the vote. See [`case-study/`](./case-study/) for a
+worked example.
+
+### Four special features that make it real
+1. **Multi-chain DEX + CEX unified signal scanner.** CEX OHLCV (ccxt) +
+   90+ chain DEX feeds (Dexscreener) become one normalised signal
+   stream the LLM can reason about — without the LLM making any API
+   calls itself. → [`posts/multi-chain-dex-and-cex-signal-scanner.md`](./posts/multi-chain-dex-and-cex-signal-scanner.md)
+2. **Paper mode by design.** No live broker, ever. The system simulates
+   every trade and reports the P&L honestly. → [`posts/why-paper-mode-by-design.md`](./posts/why-paper-mode-by-design.md)
+3. **Structured BUY/SKIP prompting.** Hard format requirement (`must
+   start with BUY: or SKIP:`), explicit risk gates, 2-sentence
+   reasoning cap. → [`posts/structured-buy-skip-prompting.md`](./posts/structured-buy-skip-prompting.md)
+4. **Free-tier LLM as the final-stage judge.** Same failover router
+   the rest of your stack runs; no paid inference in the loop unless
+   you opt in. → [`posts/free-tier-llm-as-the-final-stage-judge.md`](./posts/free-tier-llm-as-the-final-stage-judge.md)
+
+## Why the design is honest
+
+- The LLM is the *final* stage, not the only stage. Every BUY vote is
+  backed by normalised signals the model did not generate. The LLM
+  judges; the pipeline proves.
+- Paper mode is the design choice, not a missing feature. Removing
+  the live broker removes an entire class of risk and lets the LLM
+  be reasoned with as if it were a research tool.
+- The prompt is a *system*, not a string. It evolved over many prompts.
+  The version here is illustrative, not prescriptive.
+- The full pipeline is private on purpose. What is here is the shape
+  of the design and the engineering decisions that make it work.
+
+## How to cite
+Repository: https://github.com/Rawbeew/signal-then-vote
+Topics: crypto, trading-bot, llm, structured-prompting, paper-trading,
+        dex, on-chain, solana, evm, signal-engine, multi-chain,
+        decision-system, ai, free-tier
