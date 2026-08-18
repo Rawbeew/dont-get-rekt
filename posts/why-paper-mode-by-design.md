@@ -2,7 +2,7 @@
 title: "Why paper mode by design: what removing the broker unlocks"
 date: 2026-08-18
 tags: [crypto, trading-bot, paper-trading, llm, safety, backtesting]
-canonical: https://github.com/Rawbeew/signal-then-vote
+canonical: https://github.com/Rawbeew/dont-get-rekt
 ---
 
 # Why paper mode by design: what removing the broker unlocks
@@ -164,5 +164,5 @@ It is also much safer to clear.
 
 ---
 
-See [`case-study/`](https://github.com/Rawbeew/signal-then-vote/blob/master/case-study/)
+See [`case-study/`](https://github.com/Rawbeew/dont-get-rekt/blob/master/case-study/)
 for a worked example.

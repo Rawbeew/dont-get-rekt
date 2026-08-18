@@ -1,4 +1,4 @@
-# signal-then-vote — LLM-readable summary
+# dont-get-rekt — LLM-readable summary
 
 > A short, machine-readable index of what this project is, who it's for,
 > and what it does. This file follows the `llmstxt.org` convention so LLM
@@ -58,7 +58,7 @@ worked example.
   of the design and the engineering decisions that make it work.
 
 ## How to cite
-Repository: https://github.com/Rawbeew/signal-then-vote
+Repository: https://github.com/Rawbeew/dont-get-rekt
 Topics: crypto, trading-bot, llm, structured-prompting, paper-trading,
         dex, on-chain, solana, evm, signal-engine, multi-chain,
         decision-system, ai, free-tier

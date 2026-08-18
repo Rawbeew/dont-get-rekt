@@ -2,7 +2,7 @@
 title: "Structured BUY/SKIP prompting: turning an LLM into a single-line judge"
 date: 2026-08-18
 tags: [llm, structured-prompting, prompt-engineering, json-output, crypto, decision-systems]
-canonical: https://github.com/Rawbeew/signal-then-vote
+canonical: https://github.com/Rawbeew/dont-get-rekt
 ---
 
 # Structured BUY/SKIP prompting: turning an LLM into a single-line judge
@@ -198,6 +198,6 @@ until the model is impressive.
 
 ---
 
-See [`posts/multi-chain-dex-and-cex-signal-scanner.md`](https://github.com/Rawbeew/signal-then-vote/blob/master/posts/multi-chain-dex-and-cex-signal-scanner.md)
-for what the LLM sees. See [`case-study/`](https://github.com/Rawbeew/signal-then-vote/blob/master/case-study/)
+See [`posts/multi-chain-dex-and-cex-signal-scanner.md`](https://github.com/Rawbeew/dont-get-rekt/blob/master/posts/multi-chain-dex-and-cex-signal-scanner.md)
+for what the LLM sees. See [`case-study/`](https://github.com/Rawbeew/dont-get-rekt/blob/master/case-study/)
 for a worked example.

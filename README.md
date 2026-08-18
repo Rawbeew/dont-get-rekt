@@ -1,4 +1,4 @@
-# signal-then-vote
+# dont-get-rekt
 
 > The portfolio version of a paper-mode crypto signal engine: multi-chain
 > data ingestion + a free-tier LLM casting the final structured BUY/SKIP vote.

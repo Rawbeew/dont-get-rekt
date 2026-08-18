@@ -2,7 +2,7 @@
 title: "Free-tier LLM as the final-stage judge: cost, reliability, and the failover router"
 date: 2026-08-18
 tags: [llm, free-tier, failover, multi-provider, openai-compatible, reliability, crypto]
-canonical: https://github.com/Rawbeew/signal-then-vote
+canonical: https://github.com/Rawbeew/dont-get-rekt
 ---
 
 # Free-tier LLM as the final-stage judge: cost, reliability, and the failover router
@@ -162,5 +162,5 @@ constraint — the discipline is.
 
 ---
 
-See [`posts/structured-buy-skip-prompting.md`](https://github.com/Rawbeew/signal-then-vote/blob/master/posts/structured-buy-skip-prompting.md)
+See [`posts/structured-buy-skip-prompting.md`](https://github.com/Rawbeew/dont-get-rekt/blob/master/posts/structured-buy-skip-prompting.md)
 for what the prompt looks like.
