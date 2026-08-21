@@ -48,5 +48,53 @@ export NVIDIA_KEY=...
 python src/aihub.py --chat "Analyze SOL/USDC"
 ```
 
+## Architecture
+
+```
+                        ┌──────────────────────────────────────────────────────────┐
+                        │                     INGESTION (cron)                     │
+                        │                                                          │
+   Dexscreener API ────▶│  fetch tokens across 90+ chains (top gainers / new pairs)│
+   CEX feeds (ccxt) ───▶│  OHLCV + trades + liquidity snapshots                    │
+                        └───────────────┬──────────────────────────────────────────┘
+                                        ▼
+                        ┌───────────────────────────┐
+                        │        NORMALIZER         │  unify schemas, dedupe pairs,
+                        │  (chain-agnostic frames)  │  compute derived fields
+                        └───────────────┬───────────┘
+                                        ▼
+                        ┌───────────────────────────┐      every event persisted
+                        │       SIGNAL ENGINE       │      to SQLite (signals table)
+                        │  VWAP · SFP · CVD ·       │◀──── state/dgr.db
+                        │  engulfing · vol spikes   │
+                        └───────────────┬───────────┘
+                                        ▼
+                        ┌───────────────────────────┐
+                        │      WALLET GATING        │  hard filters: liquidity floor,
+                        │   (rule-based, no LLM)    │  age, volume — kills noise early
+                        └───────────────┬───────────┘
+                                        ▼
+                        ┌───────────────────────────┐
+                        │        LLM JUDGE          │  free-tier router
+                        │  structured BUY:/ SKIP:   │  (freeinference/Groq/NVIDIA/CF)
+                        │  vote + cited rationale   │  every gate it cites was
+                        └───────────────┬───────────┘  pre-computed upstream
+                                        ▼
+                        ┌───────────────────────────┐
+                        │       PAPER ENGINE        │  simulated fills, P&L,
+                        │  equity curve, override   │  engine-side veto over the LLM
+                        └───────────────────────────┘
+```
+
+The model is the judge, not the source of truth — every gate it cites is a value the pipeline already computed.
+
+## What I would improve next
+
+Honest trade-offs in the current design:
+
+1. **Postgres migration path documented** — the SQLite schema already ports unchanged to Postgres, but there's no written migration runbook (indexing, concurrent writers, retention). Worth a `docs/postgres.md`.
+2. **Backtest engine vs live-signal correlation** — signals are evaluated live only. An offline replay harness that re-runs historical frames and measures how well backtest decisions would have matched live votes would quantify regime drift.
+3. **Honeypot simulation suite** — the parser is adversarial-tested (44 tests, real payloads), but the *signal* layer isn't fuzzed against deliberately honeypot-shaped token data. A synthetic honeypot corpus for the ingestion/gating path is the next test frontier.
+
 ## License
 MIT
