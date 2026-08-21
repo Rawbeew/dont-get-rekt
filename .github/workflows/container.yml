@@ -7,7 +7,7 @@ name: Archimeda Container Scan
 
 on:
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: '0 5 * * *'  # daily container rebuild
   workflow_dispatch:
     inputs:
       mode:

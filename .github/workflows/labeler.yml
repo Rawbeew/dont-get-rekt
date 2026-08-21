@@ -1,0 +1,29 @@
+name: Daily Labeler
+
+on:
+  schedule:
+    - cron: '15 0,6,12,18 * * *'   # 45 min after each scan cycle
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Label T+24h decisions
+        run: cd src && python labeler.py
+      - name: Commit labels
+        run: |
+          if [ -f src/state/dgr.db ] && [ -n "$(git status --short src/state/)" ]; then
+            git config user.name "dgr-labeler"
+            git config user.email "bot@dontgetrekt.local"
+            git add src/state/
+            git commit -m "labels $(date -u +%Y-%m-%dT%H:%M)" || true
+            git push || true
+          fi
