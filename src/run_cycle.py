@@ -6,6 +6,7 @@ Archimeda run_cycle — main entry point.
    python run_cycle.py --watch  # continuous every 15 min
    python run_cycle.py --bot    # telegram command listener (interactive)
 """
+import os
 import sys
 import time
 import json
@@ -142,6 +143,30 @@ def run_cycle():
     # Send a summary alert if there were signals or trades
     if all_signals or closed or new_positions:
         send_alert(format_summary(summary))
+
+    # ── Persist cycle to SQLite (data pipeline: store → query → judge) ──
+    try:
+        from store import Store
+        db = Store(os.path.join(os.path.dirname(__file__), "state", "dgr.db"))
+        for signal in all_signals:
+            db.insert_signal(
+                chain=signal.get("chain", "unknown"),
+                token=signal.get("symbol", "unknown"),
+                kind=str(signal.get("signal", "unknown")).lower(),
+                direction="long" if signal.get("side", "buy") == "buy" else "short",
+                strength=float(signal.get("strength", 0.5) or 0.5),
+                meta={k: v for k, v in signal.items()
+                      if k not in ("chain", "symbol", "signal", "side")},
+            )
+        db.record_equity(
+            equity_usd=PAPER_STARTING_BALANCE + summary["realized_pnl"],
+            open_positions=summary["open_positions"],
+            realized_pnl_usd=summary["realized_pnl"],
+        )
+        print(f"   Stored: {len(all_signals)} signals, equity snapshot")
+    except Exception as e:
+        print(f"   (store skipped: {e})")
+
 
     return all_signals
 
