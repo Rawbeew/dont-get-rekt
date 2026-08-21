@@ -1,0 +1,37 @@
+name: Archimeda Paper Scan
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r src/requirements.txt
+
+      - name: Run scan cycle
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          HELIUS_API_KEY: ${{ secrets.HELIUS_API_KEY }}
+          ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
+        run: cd src && python run_cycle.py
+
+      - name: Commit state files
+        run: |
+          git config user.name "Archimeda Bot"
+          git config user.email "bot@archimeda.local"
+          git add state/*.json || true
+          git commit -m "paper state update $(date -u +%Y-%m-%dT%H:%M)" || true
+          git push || true

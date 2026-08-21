@@ -1,0 +1,26 @@
+# Build artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+
+# State directory (mounted at runtime)
+state/
+
+# Secrets / local config
+.env
+.env.local
+
+# Tests (not needed in image)
+tests/
+
+# Crash dumps + local artifacts
+*.stackdump
+insider_scan_result.json
+wallet_test.txt
+
+# Python tooling
+.pytest_cache/
+.coverage
+htmlcov/
