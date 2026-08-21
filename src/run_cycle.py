@@ -28,6 +28,15 @@ from telegram_bot import (
     send_alert, format_signal_alert, format_paper_trade, format_summary,
 )
 
+import os as _os
+
+def _alert(*args, **kwargs):
+    """Silenced when DGR_SILENT=1 — data still collected, no notifications."""
+    if _os.getenv("DGR_SILENT") == "1":
+        return
+    send_alert(*args, **kwargs)
+
+
 
 def run_cycle():
     """Run one full scan cycle."""
@@ -79,7 +88,7 @@ def run_cycle():
             print(f"     {trade['symbol']} {trade['direction']} "
                   f"P&L: ${trade['pnl_usd']:+.2f} ({trade['exit_reason']})")
             # Alert closed trades
-            send_alert(format_paper_trade(trade))
+            _alert(format_paper_trade(trade))
     else:
         print("   No positions closed this cycle")
 
@@ -111,7 +120,7 @@ def run_cycle():
             new_positions += 1
             print(f"   OPENED: {pos['symbol']} {pos['direction']} "
                   f"@ ${pos['entry_price']:.6f} ({pos['signal_type']})")
-            send_alert(format_paper_trade(pos))
+            _alert(format_paper_trade(pos))
 
         # Auto-trade if enabled (DEX signals with sufficient liq)
         from auto_trade import auto_buy
@@ -127,7 +136,7 @@ def run_cycle():
         for signal in all_signals:
             alert = format_signal_alert(signal)
             print(f"   {signal.get('signal', '?')}: {signal.get('symbol', '?')}")
-            send_alert(alert)
+            _alert(alert)
 
     # ── Summary ──────────────────────────────────────────────
     summary = get_summary()
@@ -142,7 +151,7 @@ def run_cycle():
 
     # Send a summary alert if there were signals or trades
     if all_signals or closed or new_positions:
-        send_alert(format_summary(summary))
+        _alert(format_summary(summary))
 
     # ── Persist cycle to SQLite (data pipeline: store → query → judge) ──
     try:
