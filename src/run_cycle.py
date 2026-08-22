@@ -202,10 +202,28 @@ def run_bot():
     run_bot_listener()
 
 
+def run_judge_eval():
+    """Re-score judge scenarios and print pass-rate. Cheap: len(SCENARIOS) calls."""
+    from judge_eval import SCENARIOS, run as _run
+    print(f"\n⚖️ Judge eval — re-scoring {len(SCENARIOS)} scenarios...")
+    try:
+        results = _run(use_db=False)
+    except Exception as e:
+        # loomweaver unavailable etc. — never block the trading cycle on eval
+        print(f"   (judge eval skipped: {e})")
+        return None
+    return results
+
+
 if __name__ == "__main__":
-    if "--watch" in sys.argv:
+    if "--judge-eval" in sys.argv:
+        run_judge_eval()
+    elif "--watch" in sys.argv:
         run_watch()
     elif "--bot" in sys.argv:
         run_bot()
     else:
+        # Optional pre-cycle eval pass-rate gate (cheap, 4 scenarios)
+        if os.getenv("DGR_JUDGE_EVAL_FIRST") == "1":
+            run_judge_eval()
         run_cycle()
