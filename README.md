@@ -7,7 +7,7 @@ Paper-mode crypto signal engine. Multi-chain ingestion → free-tier LLM casts s
 - Computes signals: VWAP, SFP, CVD, engulfing, volume spikes
 - Free-tier LLM (freeinference/Groq/NVIDIA/Cloudflare) casts structured BUY/SKIP votes
 - Paper-mode only: simulates trades, tracks P&L, no real money
-- Adversarial-tested: 44 tests with real payloads
+- Unit-tested: store layer, eval scenarios, LLM reasoner parsing
 
 ## Architecture
 ```
@@ -88,28 +88,19 @@ python src/aihub.py --chat "Analyze SOL/USDC"
 
 The model is the judge, not the source of truth — every gate it cites is a value the pipeline already computed.
 
-## Going live
+## Trading status
 
-The engine supports real trades via `auto_trade.py` — gated behind env vars:
+The auto-trade engine (`auto_trade.py`) is built and gated behind `LIVE_MODE=1`.
+It has **never executed a real trade**. A 30-day paper evaluation is running
+(docs/EVAL_PROTOCOL.md) — results will determine whether this gets enabled.
+Do not enable it based on this README alone.
 
-| Variable | Value | Effect |
-|---|---|---|
-| `LIVE_MODE` | `1` | Enables the trading path |
-| `HERMES_AUTO_TRADE` | `true` | Auto-buys on BUY votes |
-| `HERMES_WALLET_PRIVATE_KEY` | base58 key | Your wallet |
-| `HERMES_TRADE_AMOUNT_SOL` | e.g. `0.01` | SOL per trade |
+## Known limitations
 
-Without `LIVE_MODE=1`, every auto-buy attempt is blocked with a log message.
+- The LLM judge has been evaluated against 4 hand-labeled scenarios (not out-of-sample)
+- Paper trades are simulated at signal price; real fills would include slippage
+- Free-tier LLM judges have latency variance (2-20s per decision)
+- The 30-day evaluation is running now; no win-rate data exists yet
+- No backtest has been run against historical data (planned)
 
-**Going live:** set `LIVE_MODE=1` + `HERMES_AUTO_TRADE=true` and add your wallet key as a GitHub secret. The 30-day paper evaluation (docs/EVAL_PROTOCOL.md) provides the win-rate data — use it to size your position, not to ask permission. Start small. The gate prevents accidents, not decisions.
-
-## What I would improve next
-
-Honest trade-offs in the current design:
-
-1. **Postgres migration path documented** — the SQLite schema already ports unchanged to Postgres, but there's no written migration runbook (indexing, concurrent writers, retention). Worth a `docs/postgres.md`.
-2. **Backtest engine vs live-signal correlation** — signals are evaluated live only. An offline replay harness that re-runs historical frames and measures how well backtest decisions would have matched live votes would quantify regime drift.
-3. **Honeypot simulation suite** — the parser is adversarial-tested (44 tests, real payloads), but the *signal* layer isn't fuzzed against deliberately honeypot-shaped token data. A synthetic honeypot corpus for the ingestion/gating path is the next test frontier.
-
-## License
-MIT
+## Development approach
