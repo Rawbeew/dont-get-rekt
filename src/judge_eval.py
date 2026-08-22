@@ -20,12 +20,7 @@ import time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-# loomweaver lives in flippy; allow FLIPPY_SRC env or default sibling checkout
-_FLIPPY_SRC = os.environ.get("FLIPPY_SRC",
-    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                 "..", "flippy", "src"))
-if os.path.isdir(_FLIPPY_SRC):
-    sys.path.insert(0, os.path.realpath(_FLIPPY_SRC))
+# loomweaver is vendored under src/loomweaver — import directly, no path hacks
 
 from store import Store  # noqa: E402
 from eval_scenarios import SCENARIOS  # noqa: E402  # single source of truth
