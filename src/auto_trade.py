@@ -25,7 +25,8 @@ from buy_engine import check_safety
 from llm_reasoner import should_buy
 from exchange import swap_any, auto_sell, WALLET_PRIVATE_KEY
 
-AUTO_TRADE_ENABLED = os.getenv("HERMES_AUTO_TRADE", "true").lower() == "true"
+LIVE_MODE = os.getenv("LIVE_MODE", "0") == "1"
+AUTO_TRADE_ENABLED = LIVE_MODE and os.getenv("HERMES_AUTO_TRADE", "false").lower() == "true"
 WALLET_PRIVATE_KEY = os.getenv("HERMES_WALLET_PRIVATE_KEY", "")
 TRADE_AMOUNT_SOL = float(os.getenv("HERMES_TRADE_AMOUNT_SOL", "0.1"))
 MAX_TRADES_PER_HOUR = int(os.getenv("HERMES_MAX_TRADES_PER_HOUR", "8"))
@@ -77,7 +78,12 @@ def auto_buy(signal_data, telegram_chat_id="", bot_token=""):
     signal_data: dict with token info from DEX signal
     telegram_chat_id: where to send alert
     bot_token: bot API key
+    
+    GATED: requires LIVE_MODE=1 env var. Without it, logs and returns.
     """
+    if not LIVE_MODE:
+        print("[auto_trade] BLOCKED: LIVE_MODE=0 (paper mode) — no real trade executed")
+        return
     if not AUTO_TRADE_ENABLED:
         print("  [autobuy] Disabled (HERMES_AUTO_TRADE=false)")
         return

@@ -12,6 +12,8 @@ import time
 import json
 from datetime import datetime, timezone
 
+LIVE_MODE = os.getenv("LIVE_MODE", "0") == "1"
+
 from config import (
     PAPER_MODE, SCAN_INTERVAL_SEC, PAPER_STARTING_BALANCE,
     CEX_WATCHLIST,
@@ -123,12 +125,15 @@ def run_cycle():
             _alert(format_paper_trade(pos))
 
         # Auto-trade if enabled (DEX signals with sufficient liq)
-        from auto_trade import auto_buy
-        auto_buy(
-            signal,
-            telegram_chat_id=TELEGRAM_CHAT_ID,
-            bot_token=TELEGRAM_BOT_TOKEN,
-        )
+        if LIVE_MODE:
+            from auto_trade import auto_buy
+            auto_buy(
+                signal,
+                telegram_chat_id=TELEGRAM_CHAT_ID,
+                bot_token=TELEGRAM_BOT_TOKEN,
+            )
+        else:
+            print(f"   [paper] would auto-buy {signal.get('symbol', '?')} (LIVE_MODE=0)")
 
     # ── Alert new signals ─────────────────────────────────────
     if all_signals:
