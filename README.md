@@ -88,6 +88,21 @@ python src/aihub.py --chat "Analyze SOL/USDC"
 
 The model is the judge, not the source of truth — every gate it cites is a value the pipeline already computed.
 
+## Going live
+
+The engine supports real trades via `auto_trade.py` — gated behind env vars:
+
+| Variable | Value | Effect |
+|---|---|---|
+| `LIVE_MODE` | `1` | Enables the trading path |
+| `HERMES_AUTO_TRADE` | `true` | Auto-buys on BUY votes |
+| `HERMES_WALLET_PRIVATE_KEY` | base58 key | Your wallet |
+| `HERMES_TRADE_AMOUNT_SOL` | e.g. `0.01` | SOL per trade |
+
+Without `LIVE_MODE=1`, every auto-buy attempt is blocked with a log message.
+
+**Going live:** set `LIVE_MODE=1` + `HERMES_AUTO_TRADE=true` and add your wallet key as a GitHub secret. The 30-day paper evaluation (docs/EVAL_PROTOCOL.md) provides the win-rate data — use it to size your position, not to ask permission. Start small. The gate prevents accidents, not decisions.
+
 ## What I would improve next
 
 Honest trade-offs in the current design:
