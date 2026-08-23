@@ -2,7 +2,7 @@
 title: "Free-tier LLM as the final-stage judge: cost, reliability, and the failover router"
 date: 2026-08-18
 tags: [llm, free-tier, failover, multi-provider, openai-compatible, reliability, crypto]
-canonical: https://github.com/Rawbeew/dont-get-rekt
+canonical: https://github.com/promptcracka/dont-get-rekt
 ---
 
 # Free-tier LLM as the final-stage judge: cost, reliability, and the failover router
@@ -75,7 +75,7 @@ designs that happen to be free-tier compatible.
 ## The router in practice
 
 The actual router used here is `src/ai_failover.py` from the
-`Rawbeew/flippy` portfolio. It does five things:
+`promptcracka/flippy` portfolio. It does five things:
 
 1. **Free-first ordering.** Freeinference → Groq → NVIDIA → Cloudflare.
    A paid fallback is included but commented out by default.
@@ -162,5 +162,5 @@ constraint — the discipline is.
 
 ---
 
-See [`posts/structured-buy-skip-prompting.md`](https://github.com/Rawbeew/dont-get-rekt/blob/master/posts/structured-buy-skip-prompting.md)
+See [`posts/structured-buy-skip-prompting.md`](https://github.com/promptcracka/dont-get-rekt/blob/master/posts/structured-buy-skip-prompting.md)
 for what the prompt looks like.

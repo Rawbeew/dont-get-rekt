@@ -2,7 +2,7 @@
 title: "Multi-chain DEX and CEX signal scanner: normalising 90 chains for one LLM"
 date: 2026-08-18
 tags: [crypto, trading-bot, dex, cex, on-chain, multi-chain, solana, evm, data-pipeline]
-canonical: https://github.com/Rawbeew/dont-get-rekt
+canonical: https://github.com/promptcracka/dont-get-rekt
 ---
 
 # Multi-chain DEX and CEX signal scanner: normalising 90 chains for one LLM
@@ -227,6 +227,6 @@ prompt engineering is the last 10%.
 
 ---
 
-See [`case-study/`](https://github.com/Rawbeew/dont-get-rekt/blob/master/case-study/)
+See [`case-study/`](https://github.com/promptcracka/dont-get-rekt/blob/master/case-study/)
 for a worked example showing what one BUY/SKIP vote looks like
 end-to-end.
