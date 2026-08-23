@@ -5,6 +5,14 @@ on:
     - cron: '*/15 * * * *'
   workflow_dispatch:
 
+# Allow github-actions[bot] to push state commits
+permissions:
+  contents: write
+
+concurrency:
+  group: paper-scan-state
+  cancel-in-progress: false
+
 jobs:
   scan:
     runs-on: ubuntu-latest
@@ -29,10 +37,45 @@ jobs:
           ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
         run: cd src && python run_cycle.py
 
+      # Actual state lives in src/state/dgr.db (SQLite) — see run_cycle.py:
+      # Store(os.path.join(os.path.dirname(__file__), "state", "dgr.db")).
+      # It's covered by the .gitignore "state/" rule, hence -f.
       - name: Commit state files
         run: |
-          git config user.name "Archimeda Bot"
-          git config user.email "bot@archimeda.local"
-          git add state/*.json || true
-          git commit -m "paper state update $(date -u +%Y-%m-%dT%H:%M)" || true
-          git push || true
+          git config user.name "Raji Muhammed Robiu"
+          git config user.email "rajirabiu3@gmail.com"
+          git remote set-url origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+          if [ -f src/state/dgr.db ]; then
+            git add -f src/state/dgr.db
+            git commit -m "paper state update $(date -u +%Y-%m-%dT%H:%M)" || echo "no changes to commit"
+            git push
+          else
+            echo "::warning::src/state/dgr.db not produced this cycle"
+          fi
+
+      # Verification aid: print SQLite row counts so state can be checked
+      # from CI logs without pulling the DB.
+      - name: Print state row counts
+        if: always()
+        run: |
+          python - <<'EOF'
+          import sqlite3, os
+          p = "src/state/dgr.db"
+          if not os.path.exists(p):
+              print("no state DB produced"); raise SystemExit(0)
+          c = sqlite3.connect(p)
+          for t in ["signals", "candidates", "decisions", "trades", "equity_curve"]:
+              try:
+                  n = c.execute(f"SELECT COUNT(*) FROM {t}").fetchone()[0]
+                  print(f"{t}: {n}")
+              except sqlite3.OperationalError as e:
+                  print(f"{t}: ({e})")
+          for t, col in [("signals", "ts"), ("decisions", "ts"), ("equity_curve", "ts")]:
+              try:
+                  r = c.execute(f"SELECT {col} FROM {t} ORDER BY {col} DESC LIMIT 1").fetchone()
+                  print(f"last {t}.{col}: {r[0] if r else None}")
+              except sqlite3.OperationalError:
+                  pass
+          eq = c.execute("SELECT ts, equity_usd FROM equity_curve ORDER BY ts DESC LIMIT 1").fetchone()
+          print(f"latest equity snapshot: {eq}")
+          EOF

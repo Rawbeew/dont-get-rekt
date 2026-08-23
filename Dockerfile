@@ -45,8 +45,9 @@ ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1
 
 # State directory for paper positions, active trades, etc.
-# Mount as a volume in production: -v archimeda-state:/app/state
-RUN mkdir -p /app/state
+# run_cycle.py resolves state relative to its own file: /app/src/state/dgr.db
+# Mount as a volume in production: -v archimeda-state:/app/src/state
+RUN mkdir -p /app/src/state
 
 # Healthcheck: ensure Python interpreter works (real health is in the app)
 HEALTHCHECK --interval=60s --timeout=10s --start-period=10s --retries=3 \
