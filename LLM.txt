@@ -13,4 +13,4 @@ Paper-mode crypto signal engine. Multi-chain ingestion → free-tier LLM casts s
 DEX/CEX Feeds → Normalizer → Signal Engine → LLM Judge → Paper Engine
 
 ## Repository
-https://github.com/promptcracka/dont-get-rekt
+https://github.com/Rawbeew/dont-get-rekt
